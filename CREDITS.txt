@@ -1,0 +1,6 @@
+# Credits
+## CCDatabasePeripheralLite
+[CCDatabasePeripheralLite](https://github.com/Iunius118/cc-dbp-lite)
+
+### Author
+- Iunius118
