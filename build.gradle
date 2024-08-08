@@ -160,7 +160,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     // SQLite JDBC Driver
-    implementation "org.xerial:sqlite-jdbc:${sqlitejdbc_version}"
+    implementation("org.xerial:sqlite-jdbc:${sqlitejdbc_version}")
+    minecraftLibrary("org.xerial:sqlite-jdbc:${sqlitejdbc_version}")
     jarJar("org.xerial:sqlite-jdbc:${sqlitejdbc_version}") {
         jarJar.ranged(it, "[${sqlitejdbc_version},)")
     }
@@ -230,7 +231,7 @@ publishing {
     publications {
         register('mavenJava', MavenPublication) {
             from components.java
-            	jarJar.component(it)
+            jarJar.component(it)
         }
     }
     repositories {
