@@ -1,6 +1,7 @@
 package com.github.iunius118.ccdbplite.peripheral.databasestorage;
 
 import com.github.iunius118.ccdbplite.CCDatabasePeripheralLite;
+import com.github.iunius118.ccdbplite.detabase.Database;
 import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -12,14 +13,9 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.sqlite.JDBC;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 public class DatabaseStoragePeripheral implements IPeripheral {
     public static final String TYPE = "dbstorage";
@@ -95,31 +91,23 @@ public class DatabaseStoragePeripheral implements IPeripheral {
         }
     }
 
-    private String getDatabasePath() throws LuaException {
-        String databasePath = storage.getDatabasePath();
-
-        if (databasePath == null) {
-            // Create new database path for new database storage peripheral
-            if (storage.getStorageID() == -1) {
-                setUniqueStorageID();
-            }
-
-            final int storageID = storage.getStorageID();
-            final String subDirPath = "%s/%d".formatted(SAVE_DIR_PATH, storageID);
-            Path dirPath = storage.getLevel().getServer().getWorldPath(new LevelResource("computercraft")).resolve(subDirPath);
-            File dir = dirPath.toFile();
-
-            // Create directories for new database if they do not exist
-            if (!dir.exists() && !dir.mkdirs()) {
-                throw new LuaException("Folders for new database could not be created");
-            }
-
-            // Create path for new database
-            databasePath = dirPath.resolve("database.db").toUri().getPath();
-            storage.setDatabasePath(databasePath);
+    private String getDatabaseURL() throws LuaException {
+        if (storage.getStorageID() == -1) {
+            // Set unique ID to database peripheral when no ID is set
+            setUniqueStorageID();
         }
 
-        return databasePath;
+        final String subDirPath = SAVE_DIR_PATH + "/" + storage.getStorageID();
+        Path dirPath = storage.getLevel().getServer().getWorldPath(new LevelResource("computercraft")).resolve(subDirPath);
+        File dir = dirPath.toFile();
+
+        // Create directories for database if they do not exist
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new LuaException("Folders for new database could not be created");
+        }
+
+        // Create and return URL for database
+        return dirPath.resolve("database.db").toUri().getPath();
     }
 
     private void setUniqueStorageID() throws LuaException {

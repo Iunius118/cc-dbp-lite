@@ -17,7 +17,6 @@ public class DatabaseStorageBlockEntity extends BlockEntity {
     public static final String KEY_DATABASE_STORAGE_ID = "dbsid";
 
     private int storageID = -1;
-    private String databasePath;
 
     public DatabaseStorageBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
@@ -79,13 +78,5 @@ public class DatabaseStorageBlockEntity extends BlockEntity {
             // Update block entity tag
             setChanged();
         }
-    }
-
-    public String getDatabasePath() {
-        return databasePath;
-    }
-
-    public void setDatabasePath(String newPath) {
-        databasePath = newPath;
     }
 }
