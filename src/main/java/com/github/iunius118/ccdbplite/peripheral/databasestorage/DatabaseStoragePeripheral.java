@@ -52,43 +52,9 @@ public class DatabaseStoragePeripheral implements IPeripheral {
         return storage.getStorageID();
     }
 
-    static {
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @LuaFunction
-    public final void execute(String sql) {
-        // TODO: Execute SQL and get result
-
-        // Sample code from SQLite JDBC Driver
-        try(
-                // create a database connection
-                Connection connection = DriverManager.getConnection(JDBC.PREFIX + getDatabasePath());
-                Statement statement = connection.createStatement();
-        ){
-            statement.setQueryTimeout(30);  // set timeout to 30 sec.
-
-            statement.execute("drop table if exists person");
-            statement.execute("create table person (id integer, name string)");
-            statement.execute("insert into person values(1, 'leo')");
-            statement.execute("insert into person values(2, 'yui')");
-            statement.execute("select * from person");
-            ResultSet rs = statement.getResultSet();
-
-            while(rs.next()) {
-                // read the result set
-                System.out.println("name = " + rs.getString("name"));
-                System.out.println("id = " + rs.getInt("id"));
-            }
-        } catch(Exception e) {
-            // if the error message is "out of memory",
-            // it probably means no database file is found
-            e.printStackTrace(System.out);
-        }
+    public final void execute(String sql) throws LuaException {
+        Database.executeSQL(getDatabaseURL(), sql);
     }
 
     private String getDatabaseURL() throws LuaException {
