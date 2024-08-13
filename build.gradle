@@ -217,8 +217,8 @@ jarJar.enable()
 
 // Configure the 'jarJar' task
 // 'all' is the default classifier
-tasks.named('jarJar') {
-
+tasks.named('jarJar').configure {
+    from("LICENSE.txt", "NOTICE.txt", "CHANGELOG.txt", "CHEATSHEET.txt", "CREDITS.txt")
 }
 
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing:
