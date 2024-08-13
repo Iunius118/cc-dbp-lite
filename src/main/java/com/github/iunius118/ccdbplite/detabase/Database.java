@@ -3,10 +3,8 @@ package com.github.iunius118.ccdbplite.detabase;
 import dan200.computercraft.api.lua.LuaException;
 import org.sqlite.JDBC;
 
-import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.SQLException;
 
 public class Database {
     static {
@@ -18,33 +16,27 @@ public class Database {
         }
     }
 
-    public static void executeSQL(String databaseURL, String sql) throws LuaException {
-        // TODO: Execute SQL and get result
+    public static LuaSQLStatement createStatement(String databaseURL) throws LuaException {
+        try {
+            var connection = DriverManager.getConnection(JDBC.PREFIX + databaseURL);
+            var statement = connection.createStatement();
+            return new LuaSQLStatement(connection, statement);
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
 
-        // Sample code from SQLite JDBC Driver
-        try(
-                // create a database connection
-                Connection connection = DriverManager.getConnection(JDBC.PREFIX + databaseURL);
-                Statement statement = connection.createStatement();
-        ){
-            statement.setQueryTimeout(5);
+    public static LuaPreparedSQLStatement prepareStatement(String databaseURL, String sql) throws LuaException {
+        if (sql.isEmpty()) {
+            throw new LuaException("SQL error (empty SQL statement)");
+        }
 
-            statement.execute("drop table if exists person");
-            statement.execute("create table person (id integer, name string)");
-            statement.execute("insert into person values(1, 'leo')");
-            statement.execute("insert into person values(2, 'yui')");
-            statement.execute("select * from person");
-            ResultSet rs = statement.getResultSet();
-
-            while(rs.next()) {
-                // read the result set
-                System.out.println("name = " + rs.getString("name"));
-                System.out.println("id = " + rs.getInt("id"));
-            }
-        } catch(Exception e) {
-            // if the error message is "out of memory",
-            // it probably means no database file is found
-            e.printStackTrace(System.out);
+        try {
+            var connection = DriverManager.getConnection(JDBC.PREFIX + databaseURL);
+            var preparedStatement = connection.prepareStatement(sql);
+            return new LuaPreparedSQLStatement(connection, preparedStatement);
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
         }
     }
 }

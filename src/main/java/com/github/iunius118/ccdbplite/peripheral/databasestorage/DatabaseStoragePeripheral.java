@@ -2,6 +2,8 @@ package com.github.iunius118.ccdbplite.peripheral.databasestorage;
 
 import com.github.iunius118.ccdbplite.CCDatabasePeripheralLite;
 import com.github.iunius118.ccdbplite.detabase.Database;
+import com.github.iunius118.ccdbplite.detabase.LuaPreparedSQLStatement;
+import com.github.iunius118.ccdbplite.detabase.LuaSQLStatement;
 import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -53,8 +55,13 @@ public class DatabaseStoragePeripheral implements IPeripheral {
     }
 
     @LuaFunction
-    public final void execute(String sql) throws LuaException {
-        Database.executeSQL(getDatabaseURL(), sql);
+    public final LuaSQLStatement createStatement() throws LuaException {
+        return Database.createStatement(getDatabaseURL());
+    }
+
+    @LuaFunction
+    public final LuaPreparedSQLStatement prepareStatement(String sql) throws LuaException {
+        return Database.prepareStatement(getDatabaseURL(), sql);
     }
 
     private String getDatabaseURL() throws LuaException {
