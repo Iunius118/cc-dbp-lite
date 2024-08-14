@@ -28,7 +28,7 @@ public class Database {
 
     public static LuaPreparedSQLStatement prepareStatement(String databaseURL, String sql) throws LuaException {
         if (sql.isEmpty()) {
-            throw new LuaException("SQL error (empty SQL statement)");
+            throw new LuaException("SQL error: Empty SQL statement");
         }
 
         try {

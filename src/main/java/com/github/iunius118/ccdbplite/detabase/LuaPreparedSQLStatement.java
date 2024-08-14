@@ -7,20 +7,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class LuaPreparedSQLStatement {
-    private final Connection connection;
+public class LuaPreparedSQLStatement extends LuaSQLStatement {
     private final PreparedStatement preparedStatement;
 
     public LuaPreparedSQLStatement(Connection connection, PreparedStatement preparedStatement) {
-        this.connection = connection;
+        super(connection, preparedStatement);
         this.preparedStatement = preparedStatement;
     }
 
+    // TODO: Add parameter setter methods
+
     @LuaFunction
-    public final void close() throws LuaException {
+    public final boolean execute() throws LuaException {
         try {
-            preparedStatement.close();
-            connection.close();
+            return preparedStatement.execute();
         } catch (SQLException e) {
             throw new LuaException(e.getMessage());
         }
