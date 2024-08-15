@@ -17,6 +17,10 @@ public class LuaPreparedSQLStatement extends LuaSQLStatement {
 
     // TODO: Add parameter setter methods
 
+    /**
+     * @return {@code boolean}
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
     @LuaFunction
     public final boolean execute() throws LuaException {
         try {

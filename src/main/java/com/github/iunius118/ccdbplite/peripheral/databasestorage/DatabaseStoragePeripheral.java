@@ -22,6 +22,7 @@ import java.nio.file.Path;
 public class DatabaseStoragePeripheral implements IPeripheral {
     public static final String TYPE = "dbstorage";
     public static final String SAVE_DIR_PATH = "dbstorage";
+    public static final String DEFAULT_DATABASE_NAME = "database.db";
 
     private final DatabaseStorageBlockEntity storage;
 
@@ -49,16 +50,32 @@ public class DatabaseStoragePeripheral implements IPeripheral {
         }
     }
 
+    /**
+     * Retrieves an integer to identify this database storage peripheral.
+     * This identifier will be assigned to this peripheral when the database in this peripheral is first connected.
+     * @return {@code number} The identifier; {@code -1} If it has not yet been assigned.
+     */
     @LuaFunction
     public final int getID() {
         return storage.getStorageID();
     }
 
+    /**
+     * Connects to the database and returns a {@code Statement} table containing functions for manipulating the database.
+     * @return {@code table} The table containing functions that wraps {@code Connection} and {@code Statement} of JDBC.
+     * @throws LuaException Thrown when SQL driver returns a warning or error, or fails to assign storage ID.
+     */
     @LuaFunction
     public final LuaSQLStatement createStatement() throws LuaException {
         return Database.createStatement(getDatabaseURL());
     }
 
+    /**
+     * Connects to the database with parameterized SQL statement and returns a {@code PreparedStatement} table containing functions for manipulating the database.
+     * @param sql {@code string} An SQL statement that may contain one or more '?' parameter placeholders.
+     * @return {@code table} The table containing functions that wraps {@code Connection} and {@code PreparedStatement} of JDBC.
+     * @throws LuaException Thrown when SQL driver returns a warning or error, or fails to assign storage ID.
+     */
     @LuaFunction
     public final LuaPreparedSQLStatement prepareStatement(String sql) throws LuaException {
         return Database.prepareStatement(getDatabaseURL(), sql);
@@ -80,7 +97,7 @@ public class DatabaseStoragePeripheral implements IPeripheral {
         }
 
         // Create and return URL for database
-        return dirPath.resolve("database.db").toUri().getPath();
+        return dirPath.resolve(DEFAULT_DATABASE_NAME).toUri().getPath();
     }
 
     private void setUniqueStorageID() throws LuaException {
