@@ -94,6 +94,101 @@ public class LuaSQLStatement {
         }
     }
 
+    /// Connection Functions ///////////////////////////////////////////////////
+
+    /**
+     * Retrieves this connection's current transaction isolation level.
+     * @return {@code number} The current transaction isolation level.
+     *                        {@code 0} if transactions are not supported;
+     *                        {@code 1} if it is READ UNCOMMITTED;
+     *                        {@code 2} if it is READ COMMITTED;
+     *                        {@code 4} if it is REPEATABLE READ;
+     *                        {@code 8} if it is SERIALIZABLE.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final int getTransactionIsolation() throws LuaException {
+        try {
+            return connection.getTransactionIsolation();
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
+
+    /**
+     * Attempts to change the transaction isolation level for this connection to the one given.
+     * @param level {@code number} One of the following numbers:
+     *                             {@code 1} for READ UNCOMMITTED,
+     *                             {@code 2} for READ COMMITTED,
+     *                             {@code 4} for REPEATABLE READ,
+     *                             {@code 8} for SERIALIZABLE.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final void setTransactionIsolation(int level) throws LuaException {
+        try {
+            connection.setTransactionIsolation(level);
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
+
+    /**
+     * Retrieves the current auto-commit mode for this connection.
+     * @return {@code boolean} The current state of this connection's auto-commit mode.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final boolean getAutoCommit() throws LuaException {
+        try {
+            return connection.getAutoCommit();
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
+
+    /**
+     * Sets this connection's auto-commit mode to the given state.
+     * @param autoCommit {@code boolean} {@code true} to enable auto-commit mode; {@code false} to disable it.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final void setAutoCommit(boolean autoCommit) throws LuaException {
+        try {
+            connection.setAutoCommit(autoCommit);
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
+
+    /**
+     * Makes all changes made since the previous commit/rollback permanent and releases any database locks currently held by this connection.
+     * This function should be used only when auto-commit mode has been disabled.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final void commit() throws LuaException {
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
+
+    /**
+     * Undoes all changes made in the current transaction and releases any database locks currently held by this connection.
+     * This function should be used only when auto-commit mode has been disabled.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final void rollback() throws LuaException {
+        try {
+            connection.rollback();
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
+
     /**
      * Releases the connection to the database and JDBC resources immediately.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
