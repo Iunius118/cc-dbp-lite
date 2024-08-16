@@ -95,7 +95,7 @@ public class LuaResultSet {
     /**
      * Retrieves the value of the designated column in the current row of this result as a {@code number}.
      *
-     * <p>Note that converting SQLite 8-byte {@code INTEGER} to Lua 5.2 {@code number} may result in a loss of accuracy.
+     * <p>Note that converting SQLite 8-byte {@code INTEGER} or SQL {@code BIGINT} to Lua 5.2 {@code number} may result in a loss of accuracy.
      * @param column {@code number | string} The column index or column label. The column index is one-based.
      * @return {@code number} the column value; if the value is SQL {@code NULL}, the value returned is {@code 0}.
      * @throws LuaException Thrown when SQL driver returns a warning or error.

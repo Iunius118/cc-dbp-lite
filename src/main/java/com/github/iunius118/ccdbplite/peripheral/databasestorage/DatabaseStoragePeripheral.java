@@ -73,7 +73,7 @@ public class DatabaseStoragePeripheral implements IPeripheral {
     /**
      * Connects to the database with parameterized SQL statement and returns a {@code PreparedStatement} table containing functions for manipulating the database.
      * @param sql {@code string} An SQL statement that may contain one or more '?' parameter placeholders.
-     * @return {@code table} The table containing functions that wraps {@code Connection} and {@code PreparedStatement} of JDBC.
+     * @return {@code table} The table containing functions that wraps {@code Connection}, {@code PreparedStatement}, and {@code ParameterMetaData} of JDBC.
      * @throws LuaException Thrown when SQL driver returns a warning or error, or fails to assign storage ID.
      */
     @LuaFunction
