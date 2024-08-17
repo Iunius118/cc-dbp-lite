@@ -31,4 +31,23 @@ public class LuaSQLStatement extends LuaSQLStatementBase {
             throw new LuaException(e.getMessage());
         }
     }
+
+    /**
+     * Adds the given SQL command to the current list of commands for this statement.
+     * The commands in this list can be executed as a batch by calling the function {@code executeBatch}.
+     * @param sql {@code string} Typically this is a SQL {@code INSERT} or {@code UPDATE} statement.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final void addBatch(String sql) throws LuaException {
+        if (sql.isEmpty()) {
+            throw new LuaException("SQL error: Empty SQL statement");
+        }
+
+        try {
+            statement.addBatch(sql);
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
 }

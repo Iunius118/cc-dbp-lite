@@ -6,6 +6,9 @@ import dan200.computercraft.api.lua.LuaFunction;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class LuaSQLStatementBase {
     protected final Connection connection;
@@ -74,6 +77,40 @@ public class LuaSQLStatementBase {
         } catch (SQLException e) {
             throw new LuaException(e.getMessage());
         }
+    }
+
+    /**
+     * Empties this statement's current list of SQL commands.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final void clearBatch() throws LuaException {
+        try {
+            statement.clearBatch();
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
+
+    /**
+     * Submits a batch of commands to the database for execution and if all commands execute successfully, returns an array of update counts.
+     * @return {@code table} An array of update counts containing one element for each command in the batch.
+     *                       The elements of the array are ordered according to the order in which commands were added to the batch.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final Map<Integer, Integer> executeBatch() throws LuaException {
+        int[] updateCounts;
+
+        try {
+            updateCounts = statement.executeBatch();
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+
+        // Create a Map<Integer one_based_array_index, Integer update_count> and return it
+        return IntStream.range(0, updateCounts.length).boxed()
+                .collect(Collectors.toMap(i -> i + 1, i -> updateCounts[i]));
     }
 
     /// Connection Functions ///////////////////////////////////////////////////

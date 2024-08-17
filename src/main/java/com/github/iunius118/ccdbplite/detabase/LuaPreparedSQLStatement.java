@@ -95,6 +95,20 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
         }
     }
 
+    /**
+     * Adds a set of parameters to this prepared statement's batch of commands.
+     * The commands in this list can be executed as a batch by calling the function {@code executeBatch}.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final void addBatch() throws LuaException {
+        try {
+            preparedStatement.addBatch();
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
+
     /// ParameterMetaData Functions ////////////////////////////////////////////
 
     /**
