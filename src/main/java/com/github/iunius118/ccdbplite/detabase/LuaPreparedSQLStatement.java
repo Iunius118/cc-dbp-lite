@@ -3,10 +3,7 @@ package com.github.iunius118.ccdbplite.detabase;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 
-import java.sql.Connection;
-import java.sql.ParameterMetaData;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
     private final PreparedStatement preparedStatement;
@@ -20,7 +17,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
 
     /**
      * Sets the designated parameter to the given Lua {@code boolean} value.
-     * @param parameterIndex The parameter index one-based.
+     * @param parameterIndex {@code number} The parameter index one-based.
      * @param x {@code boolean} The parameter value.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
@@ -36,7 +33,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
     /**
      * Sets the designated parameter to the given Lua {@code number} value.
      * The driver converts this to an SQL {@code INTEGER} value when it sends it to the database.
-     * @param parameterIndex The parameter index one-based.
+     * @param parameterIndex {@code number} The parameter index one-based.
      * @param x {@code number} The parameter value.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
@@ -52,7 +49,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
     /**
      * Sets the designated parameter to the given Lua {@code number} value.
      * The driver converts this to an SQL {@code DOUBLE} value when it sends it to the database.
-     * @param parameterIndex The parameter index one-based.
+     * @param parameterIndex {@code number} The parameter index one-based.
      * @param x {@code number} The parameter value.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
@@ -67,7 +64,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
 
     /**
      * Sets the designated parameter to the given Lua {@code string} value.
-     * @param parameterIndex The parameter index one-based.
+     * @param parameterIndex {@code number} The parameter index one-based.
      * @param x {@code string} The parameter value.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
@@ -75,6 +72,34 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
     public final void setString(int parameterIndex, String x) throws LuaException {
         try {
             preparedStatement.setString(parameterIndex, x);
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
+
+    /**
+     * Sets the designated parameter to SQL {@code NULL}.
+     * @param parameterIndex {@code number} The parameter index one-based.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final void setNull(int parameterIndex) throws LuaException {
+        try {
+            preparedStatement.setNull(parameterIndex, Types.NULL);
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
+
+    /**
+     * Clears the current parameter values immediately.
+     * The parameter values are cleared immediately without waiting for automatic clearing.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final void clearParameters() throws LuaException {
+        try {
+            preparedStatement.clearParameters();
         } catch (SQLException e) {
             throw new LuaException(e.getMessage());
         }
