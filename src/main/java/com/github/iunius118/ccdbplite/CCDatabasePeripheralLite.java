@@ -1,6 +1,7 @@
 package com.github.iunius118.ccdbplite;
 
 import com.github.iunius118.ccdbplite.block.DatabaseStorageBlock;
+import com.github.iunius118.ccdbplite.data.ServerModDataGenerator;
 import com.github.iunius118.ccdbplite.peripheral.databasestorage.DatabaseStorageBlockEntity;
 import com.github.iunius118.ccdbplite.peripheral.databasestorage.DatabaseStoragePeripheral;
 import com.mojang.logging.LogUtils;
@@ -40,6 +41,7 @@ public class CCDatabasePeripheralLite {
     public CCDatabasePeripheralLite() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         registerGameObjects(modEventBus);
+        modEventBus.addListener(ServerModDataGenerator::gatherData);
 
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::attachCapability);
     }
@@ -74,7 +76,7 @@ public class CCDatabasePeripheralLite {
 
     public static final class Blocks {
         private static final Supplier<BlockBehaviour.Properties> PROPERTIES = () -> BlockBehaviour.Properties.of()
-                .mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(2F);
+                .mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(2F).explosionResistance(2000.0F);
 
         public static final DatabaseStorageBlock DATABASE_STORAGE = new DatabaseStorageBlock(PROPERTIES.get());
     }
