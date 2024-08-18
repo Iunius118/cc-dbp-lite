@@ -92,8 +92,7 @@ public class DatabaseStorageBlock extends BaseEntityBlock {
             var compoundTag = itemStack.getTag();
 
             getStorageIDFromTag(compoundTag).ifPresent(dbID -> {
-                // TODO: Translate
-                MutableComponent component = Component.literal("Storage ID: %d".formatted(dbID)).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
+                MutableComponent component = Component.translatable("tooltip.ccdbplite.storage_id", dbID).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
                 components.add(component);
             });
         }

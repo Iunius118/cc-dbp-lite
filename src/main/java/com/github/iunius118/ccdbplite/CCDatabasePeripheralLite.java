@@ -1,6 +1,7 @@
 package com.github.iunius118.ccdbplite;
 
 import com.github.iunius118.ccdbplite.block.DatabaseStorageBlock;
+import com.github.iunius118.ccdbplite.data.ClientModDataGenerator;
 import com.github.iunius118.ccdbplite.data.ServerModDataGenerator;
 import com.github.iunius118.ccdbplite.peripheral.databasestorage.DatabaseStorageBlockEntity;
 import com.github.iunius118.ccdbplite.peripheral.databasestorage.DatabaseStoragePeripheral;
@@ -27,6 +28,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
@@ -34,8 +36,9 @@ import org.slf4j.Logger;
 import java.util.function.Supplier;
 
 @Mod(CCDatabasePeripheralLite.MOD_ID)
-public class CCDatabasePeripheralLite {
+public final class CCDatabasePeripheralLite {
     public static final String MOD_ID = "ccdbplite";
+    public static final String MOD_NAME = "CCDatabasePeripheralLite";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public CCDatabasePeripheralLite() {
@@ -43,7 +46,15 @@ public class CCDatabasePeripheralLite {
         registerGameObjects(modEventBus);
         modEventBus.addListener(ServerModDataGenerator::gatherData);
 
+        if (FMLLoader.getDist().isClient()) {
+            modEventBus.addListener(ClientModDataGenerator::gatherData);
+        }
+
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::attachCapability);
+    }
+
+    public static ResourceLocation id(String path) {
+        return new ResourceLocation(CCDatabasePeripheralLite.MOD_ID, path);
     }
 
     private static final ResourceLocation PERIPHERAL = new ResourceLocation(ComputerCraftAPI.MOD_ID, "peripheral");
@@ -91,11 +102,9 @@ public class CCDatabasePeripheralLite {
 
     public static final class CreativeModeTabs {
         public static CreativeModeTab MAIN = CreativeModeTab.builder()
-                .title(Component.translatable("itemGroup." + MOD_ID + ".main"))
+                .title(Component.translatable("itemGroup.ccdbplite.main"))
                 .icon(() -> new ItemStack(Blocks.DATABASE_STORAGE))
-                .displayItems((params, output) -> {
-                    output.accept(Items.DATABASE_STORAGE);
-                })
+                .displayItems((params, output) -> output.accept(Items.DATABASE_STORAGE))
                 .build();
     }
 

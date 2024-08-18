@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "ccdbplite:block/database_storage_top",
+    "side": "ccdbplite:block/database_storage_side",
+    "top": "ccdbplite:block/database_storage_top"
+  }
+}

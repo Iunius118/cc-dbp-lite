@@ -1,0 +1,5 @@
+{
+  "block.ccdbplite.database_storage": "Database Storage",
+  "itemGroup.ccdbplite.main": "CCDatabasePeripheralLite",
+  "tooltip.ccdbplite.storage_id": "Storage ID: %s"
+}
