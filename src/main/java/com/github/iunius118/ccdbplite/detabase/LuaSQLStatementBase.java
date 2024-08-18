@@ -59,6 +59,7 @@ public class LuaSQLStatementBase {
 
     /**
      * Moves to the next result.
+     * Implicitly closes any current result obtained with the function getResultSet.
      *
      * <p>There are no more results when the following is true:
      *

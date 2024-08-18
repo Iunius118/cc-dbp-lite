@@ -36,27 +36,13 @@ public class LuaResultSet {
     }
 
     /**
-     * Releases the result object and JDBC resources immediately.
+     * Releases the result and JDBC resources immediately.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
     @LuaFunction
     public final void close() throws LuaException {
         try {
             resultSet.close();
-        } catch (SQLException e) {
-            throw new LuaException(e.getMessage());
-        }
-    }
-
-    /**
-     * Reports whether the last column read had a value of SQL {@code NULL}.
-     * @return {@code boolean} {@code true} if the last column value read was SQL {@code NULL} and {@code false} otherwise.
-     * @throws LuaException Thrown when SQL driver returns a warning or error.
-     */
-    @LuaFunction
-    public final boolean wasNull() throws LuaException {
-        try {
-            return resultSet.wasNull();
         } catch (SQLException e) {
             throw new LuaException(e.getMessage());
         }
@@ -80,7 +66,7 @@ public class LuaResultSet {
     /**
      * Retrieves the value of the designated column in the current row of this result as a {@code boolean}.
      * @param column {@code number | string} The column index or column label. The column index is one-based.
-     * @return {@code boolean} the column value; if the value is SQL {@code NULL}, the value returned is {@code false}.
+     * @return {@code boolean} The column value; if the value is SQL {@code NULL}, the value returned is {@code false}.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
     @LuaFunction
@@ -97,7 +83,7 @@ public class LuaResultSet {
      *
      * <p>Note that converting SQLite 8-byte {@code INTEGER} or SQL {@code BIGINT} to Lua 5.2 {@code number} may result in a loss of accuracy.
      * @param column {@code number | string} The column index or column label. The column index is one-based.
-     * @return {@code number} the column value; if the value is SQL {@code NULL}, the value returned is {@code 0}.
+     * @return {@code number} The column value; if the value is SQL {@code NULL}, the value returned is {@code 0}.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
     @LuaFunction
@@ -113,13 +99,27 @@ public class LuaResultSet {
     /**
      * Retrieves the value of the designated column in the current row of this result as a {@code string}.
      * @param column {@code number | string} The column index or column label. The column index is one-based.
-     * @return {@code string} the column value; if the value is SQL {@code NULL}, the value returned is {@code nil}.
+     * @return {@code string} The column value; if the value is SQL {@code NULL}, the value returned is {@code nil}.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
     @LuaFunction
     public final String getString(Object column) throws LuaException {
         try {
             return resultSet.getString(checkColumnDescriptor(column));
+        } catch (SQLException e) {
+            throw new LuaException(e.getMessage());
+        }
+    }
+
+    /**
+     * Reports whether the last column read had a value of SQL {@code NULL}.
+     * @return {@code boolean} {@code true} if the last column value read was SQL {@code NULL} and {@code false} otherwise.
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final boolean wasNull() throws LuaException {
+        try {
+            return resultSet.wasNull();
         } catch (SQLException e) {
             throw new LuaException(e.getMessage());
         }
