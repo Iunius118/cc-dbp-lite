@@ -2,23 +2,23 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
+    "#": {
+      "tag": "forge:stone"
+    },
     "D": {
       "item": "computercraft:disk_drive"
     },
     "R": {
       "tag": "forge:storage_blocks/redstone"
     },
-    "S": {
-      "item": "minecraft:stone"
-    },
     "i": {
       "tag": "forge:ingots/iron"
     }
   },
   "pattern": [
-    "SDS",
-    "SRS",
-    "SiS"
+    "#D#",
+    "#R#",
+    "#i#"
   ],
   "result": {
     "item": "ccdbplite:database_storage"

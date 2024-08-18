@@ -16,7 +16,6 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -34,7 +33,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class ServerModDataGenerator {
+public final class ServerModDataGenerator {
     // RecipeProvider
     private static Consumer<GatherDataEvent> recipeGenerator = event -> {
         var dataGenerator = event.getGenerator();
@@ -42,10 +41,10 @@ public class ServerModDataGenerator {
             @Override
             protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
                 ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, CCDatabasePeripheralLite.Items.DATABASE_STORAGE)
-                        .pattern("SDS")
-                        .pattern("SRS")
-                        .pattern("SiS")
-                        .define('S', Items.STONE)
+                        .pattern("#D#")
+                        .pattern("#R#")
+                        .pattern("#i#")
+                        .define('#', Tags.Items.STONE)
                         .define('D', ForgeRegistries.ITEMS.getValue(new ResourceLocation(ComputerCraftAPI.MOD_ID, "disk_drive")))
                         .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                         .define('i', Tags.Items.INGOTS_IRON)
