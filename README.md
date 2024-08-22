@@ -42,6 +42,8 @@ end
 -- Connect to database
 stmt = db.createStatement()
 
+print("Connected to database, storage ID " .. db.getID())
+
 -- Execute update
 stmt.execute("DROP TABLE IF EXISTS player")
 stmt.execute("CREATE TABLE player (id INTEGER PRIMARY KEY, name TEXT)")
@@ -59,14 +61,14 @@ rs = stmt.getResultSet()
 result = {colors.orange, {"id", "name"}, colors.white}
 
 while rs.next() do
-  id = rs.getString('id')  -- Get id as string
-  name = rs.getString('name')
+  id = rs.getString("id")  -- Get id as string
+  name = rs.getString("name")
   table.insert(result, {id, name})
 end
 
 textutils.tabulate(table.unpack(result))
 
--- Release resources
+-- Disconnect from database
 rs.close()
 stmt.close()
 ```
