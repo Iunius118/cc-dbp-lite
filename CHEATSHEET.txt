@@ -53,7 +53,7 @@ The database file is saved in `(world_dir)/computercraft/dbstorage/(storage_id)/
 
 - execute(sql)
   - Executes the given SQL statement
-  - sql: [string] An SQL statement
+  - sql - [string] An SQL statement
   - Returns - [boolean] true if the first result is a Result Set table; false if it is an update count or there are no results
 - getResultSet()
   - Retrieves the current result as a Result Set table containing functions for manipulating the result

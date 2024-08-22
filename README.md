@@ -12,6 +12,61 @@ A Minecraft mod to add a peripheral for [CC: Tweaked](https://tweaked.cc/) to ma
 
 Download a JAR file named `*-all.jar` from [Releases](https://github.com/Iunius118/cc-dbp-lite/releases) and place it in your `mods` folder.
 
-## Description
+## How to Get Started
 
-See [mod_description.md](docs/mod_description.md).
+1. Craft a Database Storage
+
+   from 6 Stones, 1 Disk Drive, 1 Block of Redstone, and 1 Iron Ingot
+
+   ![Crafting Database Storage](docs/media/crafting_database_storage.png)
+
+2. Connect the Database Storage to a Computer
+
+   ![Crafting Database Storage](docs/media/database_storage.png)
+
+3. Call functions of the Database Storage from the computer and manipulate database
+
+    See [mod_description.md](docs/mod_description.md) for more information about Database Storage functions
+
+Sample code:
+
+```Lua
+-- Find peripheral
+db = peripheral.find("dbstorage")
+
+if not db then
+  print("Database Storage was not found")
+  return
+end
+
+-- Connect to database
+stmt = db.createStatement()
+
+-- Execute update
+stmt.execute("DROP TABLE IF EXISTS player")
+stmt.execute("CREATE TABLE player (id INTEGER PRIMARY KEY, name TEXT)")
+stmt.execute("INSERT INTO player VALUES(1, 'Steve')")
+stmt.execute("INSERT INTO player VALUES(2, 'Alex')")
+stmt.execute("INSERT INTO player VALUES(3, 'Noor')")
+
+-- Execute query
+stmt.execute("SELECT * FROM player")
+
+-- Get result set
+rs = stmt.getResultSet()
+
+-- Print result
+result = {colors.orange, {"id", "name"}, colors.white}
+
+while rs.next() do
+  id = rs.getString('id')  -- Get id as string
+  name = rs.getString('name')
+  table.insert(result, {id, name})
+end
+
+textutils.tabulate(table.unpack(result))
+
+-- Release resources
+rs.close()
+stmt.close()
+```
