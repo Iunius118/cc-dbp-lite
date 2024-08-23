@@ -32,7 +32,7 @@ Sample code:
 
 ```Lua
 -- Find peripheral
-db = peripheral.find("dbstorage")
+local db = peripheral.find("dbstorage")
 
 if not db then
   print("Database Storage was not found")
@@ -40,7 +40,7 @@ if not db then
 end
 
 -- Connect to database
-stmt = db.createStatement()
+local stmt = db.createStatement()
 
 print("Connected to database, storage ID " .. db.getID())
 
@@ -55,14 +55,14 @@ stmt.execute("INSERT INTO player VALUES(3, 'Noor')")
 stmt.execute("SELECT * FROM player")
 
 -- Get result set
-rs = stmt.getResultSet()
+local rs = stmt.getResultSet()
 
 -- Print result
-result = {colors.orange, {"id", "name"}, colors.white}
+local result = {colors.orange, {"id", "name"}, colors.white}
 
 while rs.next() do
-  id = rs.getString("id")  -- Get id as string
-  name = rs.getString("name")
+  local id = rs.getString("id")  -- Get id as string
+  local name = rs.getString("name")
   table.insert(result, {id, name})
 end
 
