@@ -2,14 +2,16 @@ package com.github.iunius118.ccdbplite.detabase;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.CompletableFuture;
 
 public class LuaSQLStatement extends LuaSQLStatementBase {
-    public LuaSQLStatement(Connection connection, Statement statement) {
-        super(connection, statement);
+    public LuaSQLStatement(IComputerAccess computer, Connection connection, Statement statement) {
+        super(computer, connection, statement);
     }
 
     /**
@@ -51,5 +53,37 @@ public class LuaSQLStatement extends LuaSQLStatementBase {
         } catch (SQLException e) {
             throw new LuaException(e.getMessage());
         }
+    }
+
+    /// Asynchronous Functions /////////////////////////////////////////////////
+
+    /**
+     * Asynchronously call {@code execute(sql)}.
+     *
+     * <p>This returns immediately.
+     * When the execution has completed, a {@code dbstorage_response} event will be queued.
+     * The second return value of the event matches the return value of this function.
+     * When the execution has completed normally,
+     * the third return value of the event is {@code true} and the fourth return value of the event is the return value of {@code execute(sql)}.
+     * When the execution has completed exceptionally,
+     * the third return value of the event is {@code false} and the fourth return value of the event is the reason.
+     *
+     * @return {@code number} The ID of the execution.
+     *                        When the execution has completed, it will queue a {@code dbstorage_response} event with a matching id.
+     */
+    @LuaFunction
+    public final int executeAsync(String sql) {
+        final int eventID = DatabaseStorageResponseEvent.getNewEventID();
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                boolean result = execute(sql);
+                DatabaseStorageResponseEvent.succeed(computer, eventID, result);
+            } catch (LuaException e) {
+                DatabaseStorageResponseEvent.fail(computer, eventID, e.getMessage());
+            }
+        });
+
+        return eventID;
     }
 }

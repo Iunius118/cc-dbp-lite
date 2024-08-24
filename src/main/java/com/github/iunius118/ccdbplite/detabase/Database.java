@@ -1,6 +1,7 @@
 package com.github.iunius118.ccdbplite.detabase;
 
 import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 import org.sqlite.JDBC;
 
 import java.sql.DriverManager;
@@ -16,17 +17,19 @@ public class Database {
         }
     }
 
-    public static LuaSQLStatement createStatement(String databaseURL) throws LuaException {
+    private Database() {}
+
+    public static LuaSQLStatement createStatement(IComputerAccess computer, String databaseURL) throws LuaException {
         try {
             var connection = DriverManager.getConnection(JDBC.PREFIX + databaseURL);
             var statement = connection.createStatement();
-            return new LuaSQLStatement(connection, statement);
+            return new LuaSQLStatement(computer, connection, statement);
         } catch (SQLException e) {
             throw new LuaException(e.getMessage());
         }
     }
 
-    public static LuaPreparedSQLStatement prepareStatement(String databaseURL, String sql) throws LuaException {
+    public static LuaPreparedSQLStatement prepareStatement(IComputerAccess computer, String databaseURL, String sql) throws LuaException {
         if (sql.isEmpty()) {
             throw new LuaException("SQL error: Empty SQL statement");
         }
@@ -34,7 +37,7 @@ public class Database {
         try {
             var connection = DriverManager.getConnection(JDBC.PREFIX + databaseURL);
             var preparedStatement = connection.prepareStatement(sql);
-            return new LuaPreparedSQLStatement(connection, preparedStatement);
+            return new LuaPreparedSQLStatement(computer, connection, preparedStatement);
         } catch (SQLException e) {
             throw new LuaException(e.getMessage());
         }

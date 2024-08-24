@@ -2,19 +2,23 @@ package com.github.iunius118.ccdbplite.detabase;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class LuaSQLStatementBase {
+    protected final IComputerAccess computer;
     protected final Connection connection;
     protected final Statement statement;
 
-    public LuaSQLStatementBase(Connection connection, Statement statement) {
+    public LuaSQLStatementBase(IComputerAccess computer, Connection connection, Statement statement) {
+        this.computer = computer;
         this.connection = connection;
         this.statement = statement;
     }
@@ -233,5 +237,66 @@ public class LuaSQLStatementBase {
         } catch (SQLException e) {
             throw new LuaException(e.getMessage());
         }
+    }
+
+    /// Asynchronous Functions /////////////////////////////////////////////////
+
+    /**
+     * Asynchronously call {@code executeBatch()}.
+     *
+     * <p>This returns immediately.
+     * When the execution has completed, a {@code dbstorage_response} event will be queued.
+     * The second return value of the event matches the return value of this function.
+     * When the execution has completed normally,
+     * the third return value of the event is {@code true} and the fourth return value of the event is the return value of {@code executeBatch()}.
+     * When the execution has completed exceptionally,
+     * the third return value of the event is {@code false} and the fourth return value of the event is the reason.
+     *
+     * @return {@code number} The ID of the execution.
+     *                        When the execution has completed, it will queue a {@code dbstorage_response} event with a matching id.
+     */
+    @LuaFunction
+    public final int executeBatchAsync() {
+        final int eventID = DatabaseStorageResponseEvent.getNewEventID();
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                Map<Integer, Integer> result = executeBatch();
+                DatabaseStorageResponseEvent.succeed(computer, eventID, result);
+            } catch (LuaException e) {
+                DatabaseStorageResponseEvent.fail(computer, eventID, e.getMessage());
+            }
+        });
+
+        return eventID;
+    }
+
+    /**
+     * Asynchronously call {@code commit()}.
+     *
+     * <p>This returns immediately.
+     * When the commit has completed, a {@code dbstorage_response} event will be queued.
+     * The second return value of the event matches the return value of this function.
+     * When the commit has completed normally, the third return value of the event is {@code true}.
+     * When the commit has completed exceptionally,
+     * the third return value of the event is {@code false} and the fourth return value of the event is the reason.
+     *
+     * @return {@code number} The ID of the commit.
+     *                        When the commit has completed, it will queue a {@code dbstorage_response} event with a matching id.
+     */
+    @LuaFunction
+    public final int commitAsync() {
+        final int eventID = DatabaseStorageResponseEvent.getNewEventID();
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                commit();
+                DatabaseStorageResponseEvent.succeed(computer, eventID, null);
+            } catch (LuaException e) {
+                DatabaseStorageResponseEvent.fail(computer, eventID, e.getMessage());
+            }
+        });
+
+        return eventID;
     }
 }

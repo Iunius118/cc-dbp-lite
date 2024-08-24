@@ -7,6 +7,7 @@ import com.github.iunius118.ccdbplite.detabase.LuaSQLStatement;
 import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.storage.LevelResource;
@@ -68,8 +69,8 @@ public class DatabaseStoragePeripheral implements IPeripheral {
      * @throws LuaException Thrown when SQL driver returns a warning or error, or fails to assign storage ID.
      */
     @LuaFunction
-    public final LuaSQLStatement createStatement() throws LuaException {
-        return Database.createStatement(getDatabaseURL());
+    public final LuaSQLStatement createStatement(IComputerAccess computer) throws LuaException {
+        return Database.createStatement(computer, getDatabaseURL());
     }
 
     /**
@@ -80,8 +81,8 @@ public class DatabaseStoragePeripheral implements IPeripheral {
      * @throws LuaException Thrown when SQL driver returns a warning or error, or fails to assign storage ID.
      */
     @LuaFunction
-    public final LuaPreparedSQLStatement prepareStatement(String sql) throws LuaException {
-        return Database.prepareStatement(getDatabaseURL(), sql);
+    public final LuaPreparedSQLStatement prepareStatement(IComputerAccess computer, String sql) throws LuaException {
+        return Database.prepareStatement(computer, getDatabaseURL(), sql);
     }
 
     private String getDatabaseURL() throws LuaException {

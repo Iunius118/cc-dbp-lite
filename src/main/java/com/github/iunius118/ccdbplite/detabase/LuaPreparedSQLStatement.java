@@ -2,15 +2,17 @@ package com.github.iunius118.ccdbplite.detabase;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 
 import java.sql.*;
+import java.util.concurrent.CompletableFuture;
 
 public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
     private final PreparedStatement preparedStatement;
     private final ParameterMetaData parameterMetaData;
 
-    public LuaPreparedSQLStatement(Connection connection, PreparedStatement preparedStatement) throws SQLException {
-        super(connection, preparedStatement);
+    public LuaPreparedSQLStatement(IComputerAccess computer, Connection connection, PreparedStatement preparedStatement) throws SQLException {
+        super(computer, connection, preparedStatement);
         this.preparedStatement = preparedStatement;
         this.parameterMetaData = preparedStatement.getParameterMetaData();
     }
@@ -211,5 +213,37 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
         } catch (SQLException e) {
             throw new LuaException(e.getMessage());
         }
+    }
+
+    /// Asynchronous Functions /////////////////////////////////////////////////
+
+    /**
+     * Asynchronously call {@code execute()}.
+     *
+     * <p>This returns immediately.
+     * When the execution has completed, a {@code dbstorage_response} event will be queued.
+     * The second return value of the event matches the return value of this function.
+     * When the execution has completed normally,
+     * the third return value of the event is {@code true} and the fourth return value of the event is the return value of {@code execute()}.
+     * When the execution has completed exceptionally,
+     * the third return value of the event is {@code false} and the fourth return value of the event is the reason.
+     *
+     * @return {@code number} The ID of the execution.
+     *                        When the execution has completed, it will queue a {@code dbstorage_response} event with a matching id.
+     */
+    @LuaFunction
+    public final int executeAsync() {
+        final int eventID = DatabaseStorageResponseEvent.getNewEventID();
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                boolean result = execute();
+                DatabaseStorageResponseEvent.succeed(computer, eventID, result);
+            } catch (LuaException e) {
+                DatabaseStorageResponseEvent.fail(computer, eventID, e.getMessage());
+            }
+        });
+
+        return eventID;
     }
 }
