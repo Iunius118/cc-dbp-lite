@@ -53,6 +53,7 @@ public class DatabaseStoragePeripheral implements IPeripheral {
     /**
      * Retrieves an integer to identify this database storage peripheral.
      * This identifier will be assigned to this peripheral when the database in this peripheral is first connected.
+     *
      * @return {@code number} The identifier; {@code -1} If it has not yet been assigned.
      */
     @LuaFunction
@@ -62,6 +63,7 @@ public class DatabaseStoragePeripheral implements IPeripheral {
 
     /**
      * Connects to the database and returns a {@code Statement} table containing functions for manipulating the database.
+     *
      * @return {@code table} The table containing functions that wraps {@code Connection} and {@code Statement} of JDBC.
      * @throws LuaException Thrown when SQL driver returns a warning or error, or fails to assign storage ID.
      */
@@ -72,6 +74,7 @@ public class DatabaseStoragePeripheral implements IPeripheral {
 
     /**
      * Connects to the database with parameterized SQL statement and returns a {@code PreparedStatement} table containing functions for manipulating the database.
+     *
      * @param sql {@code string} An SQL statement that may contain one or more '?' parameter placeholders.
      * @return {@code table} The table containing functions that wraps {@code Connection}, {@code PreparedStatement}, and {@code ParameterMetaData} of JDBC.
      * @throws LuaException Thrown when SQL driver returns a warning or error, or fails to assign storage ID.

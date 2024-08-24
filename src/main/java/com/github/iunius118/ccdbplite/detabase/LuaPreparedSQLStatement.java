@@ -17,6 +17,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
 
     /**
      * Sets the designated parameter to the given Lua {@code boolean} value.
+     *
      * @param parameterIndex {@code number} The parameter index one-based.
      * @param x {@code boolean} The parameter value.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
@@ -33,6 +34,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
     /**
      * Sets the designated parameter to the given Lua {@code number} value.
      * The driver converts this to an SQL {@code INTEGER} value when it sends it to the database.
+     *
      * @param parameterIndex {@code number} The parameter index one-based.
      * @param x {@code number} The parameter value.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
@@ -49,6 +51,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
     /**
      * Sets the designated parameter to the given Lua {@code number} value.
      * The driver converts this to an SQL {@code DOUBLE} value when it sends it to the database.
+     *
      * @param parameterIndex {@code number} The parameter index one-based.
      * @param x {@code number} The parameter value.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
@@ -64,6 +67,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
 
     /**
      * Sets the designated parameter to the given Lua {@code string} value.
+     *
      * @param parameterIndex {@code number} The parameter index one-based.
      * @param x {@code string} The parameter value.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
@@ -79,6 +83,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
 
     /**
      * Sets the designated parameter to SQL {@code NULL}.
+     *
      * @param parameterIndex {@code number} The parameter index one-based.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
@@ -94,6 +99,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
     /**
      * Clears the current parameter values immediately.
      * The parameter values are cleared immediately without waiting for automatic clearing.
+     *
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
     @LuaFunction
@@ -107,6 +113,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
 
     /**
      * Executes the SQL statement in this prepared statement.
+     *
      * @return {@code boolean} {@code true} if the first result is a {@code ResultSet} table;
      *                         {@code false} if it is an update count or there are no results.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
@@ -123,6 +130,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
     /**
      * Adds a set of parameters to this prepared statement's batch of commands.
      * The commands in this list can be executed as a batch by calling the function {@code executeBatch}.
+     *
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
     @LuaFunction
@@ -138,6 +146,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
 
     /**
      * Retrieves the number of parameters in this prepared statement.
+     *
      * @return {@code number} The number of parameters.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
@@ -152,6 +161,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
 
     /**
      * Retrieves the designated parameter's database-specific type name.
+     *
      * @param parameterIndex {@code number} The parameter index one-based.
      * @return {@code string} The type name used by the database.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
@@ -167,6 +177,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
 
     /**
      * Retrieves the designated parameter's mode.
+     *
      * @param parameterIndex {@code number} The parameter index one-based.
      * @return {@code number} The mode of the parameter.
      *                        {@code 0} if the mode of the parameter is unknown;
@@ -186,6 +197,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
 
     /**
      * Retrieves whether null values are allowed in the designated parameter.
+     *
      * @param parameterIndex {@code number} The parameter index one-based.
      * @return {@code number} {@code 0} if the column will not allow {@code NULL} values;
      *                        {@code 1} if the column will allow {@code NULL} values;

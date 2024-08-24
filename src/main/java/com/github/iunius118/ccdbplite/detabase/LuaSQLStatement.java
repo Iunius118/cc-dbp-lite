@@ -14,6 +14,7 @@ public class LuaSQLStatement extends LuaSQLStatementBase {
 
     /**
      * Executes the given SQL statement.
+     *
      * @param sql {@code string} An SQL statement.
      * @return {@code boolean} {@code true} if the first result is a {@code ResultSet} table;
      *                         {@code false} if it is an update count or there are no results.
@@ -35,6 +36,7 @@ public class LuaSQLStatement extends LuaSQLStatementBase {
     /**
      * Adds the given SQL command to the current list of commands for this statement.
      * The commands in this list can be executed as a batch by calling the function {@code executeBatch}.
+     *
      * @param sql {@code string} Typically this is a SQL {@code INSERT} or {@code UPDATE} statement.
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
