@@ -1,6 +1,8 @@
 package com.github.iunius118.ccdbplite.peripheral.databasestorage;
 
 import com.github.iunius118.ccdbplite.CCDatabasePeripheralLite;
+import com.github.iunius118.ccdbplite.detabase.LuaSQLStatementBase;
+import dan200.computercraft.api.peripheral.IComputerAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -12,10 +14,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class DatabaseStorageBlockEntity extends BlockEntity {
     public static final String KEY_DATABASE_STORAGE_ID = "dbsid";
 
+    private final Map<IComputerAccess, Set<LuaSQLStatementBase>> databaseConnections = new HashMap<>();
     private int storageID = -1;
 
     public DatabaseStorageBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
@@ -66,6 +72,10 @@ public class DatabaseStorageBlockEntity extends BlockEntity {
         super.setChanged();
         // Synchronize block entity tag to client side
         this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
+    }
+
+    public Map<IComputerAccess, Set<LuaSQLStatementBase>> getDatabaseConnections() {
+        return databaseConnections;
     }
 
     public int getStorageID() {

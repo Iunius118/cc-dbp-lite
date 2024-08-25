@@ -17,13 +17,13 @@ public class LuaSQLStatementBase {
     protected final Connection connection;
     protected final Statement statement;
 
+    private boolean isClosed = false;
+
     public LuaSQLStatementBase(IComputerAccess computer, Connection connection, Statement statement) {
         this.computer = computer;
         this.connection = connection;
         this.statement = statement;
     }
-
-    // TODO: Add batch functions
 
     /**
      * Retrieves the current result as a {@code ResultSet} table containing functions for manipulating the result.
@@ -232,10 +232,17 @@ public class LuaSQLStatementBase {
     @LuaFunction
     public final void close() throws LuaException {
         try {
-            statement.close();
-            connection.close();
+            closeConnection();
         } catch (SQLException e) {
             throw new LuaException(e.getMessage());
+        }
+    }
+
+    public void closeConnection() throws SQLException {
+        if (!isClosed) {
+            isClosed = true;
+            statement.close();
+            connection.close();
         }
     }
 

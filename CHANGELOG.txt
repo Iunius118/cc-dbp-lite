@@ -3,6 +3,9 @@
 [Source](https://github.com/Iunius118/cc-dbp-lite).
 
 ## [Unreleased]
+### Added
+- Async execution functions and dbstorage_response event
+- Function closeAll()
 
 ## [0.1.0]
 - Initial release.

@@ -100,7 +100,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
 
     /**
      * Clears the current parameter values immediately.
-     * The parameter values are cleared immediately without waiting for automatic clearing.
+     * The parameter values are cleared immediately instead of waiting for them to be automatically cleared.
      *
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */

@@ -4,6 +4,7 @@ import com.github.iunius118.ccdbplite.CCDatabasePeripheralLite;
 import com.github.iunius118.ccdbplite.detabase.Database;
 import com.github.iunius118.ccdbplite.detabase.LuaPreparedSQLStatement;
 import com.github.iunius118.ccdbplite.detabase.LuaSQLStatement;
+import com.github.iunius118.ccdbplite.detabase.LuaSQLStatementBase;
 import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -19,6 +20,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class DatabaseStoragePeripheral implements IPeripheral {
     public static final String TYPE = "dbstorage";
@@ -34,6 +40,38 @@ public class DatabaseStoragePeripheral implements IPeripheral {
     @Override
     public String getType() {
         return TYPE;
+    }
+
+    @Override
+    public void attach(IComputerAccess computer) {
+        Map<IComputerAccess, Set<LuaSQLStatementBase>> connections = storage.getDatabaseConnections();
+
+        synchronized (connections) {
+            if (!connections.containsKey(computer)) {
+                // Add Set of connections from computer
+                connections.put(computer, new HashSet<>());
+            }
+        }
+    }
+
+    @Override
+    public void detach(IComputerAccess computer) {
+        Map<IComputerAccess, Set<LuaSQLStatementBase>> connections = storage.getDatabaseConnections();
+
+        synchronized (connections) {
+            Set<LuaSQLStatementBase> statements = connections.getOrDefault(computer, Collections.emptySet());
+
+            // Close all connections from detached computer
+            for (LuaSQLStatementBase statement : statements) {
+                try {
+                    statement.closeConnection();
+                } catch (SQLException ignored) {
+                }
+            }
+
+            // Remove Set of connections from computer
+            connections.remove(computer);
+        }
     }
 
     @Nullable
@@ -70,7 +108,11 @@ public class DatabaseStoragePeripheral implements IPeripheral {
      */
     @LuaFunction
     public final LuaSQLStatement createStatement(IComputerAccess computer) throws LuaException {
-        return Database.createStatement(computer, getDatabaseURL());
+        // Create a new statement
+        LuaSQLStatement statement = Database.createStatement(computer, getDatabaseURL());
+        // Record the statement
+        addStatement(computer, statement);
+        return statement;
     }
 
     /**
@@ -82,7 +124,36 @@ public class DatabaseStoragePeripheral implements IPeripheral {
      */
     @LuaFunction
     public final LuaPreparedSQLStatement prepareStatement(IComputerAccess computer, String sql) throws LuaException {
-        return Database.prepareStatement(computer, getDatabaseURL(), sql);
+        // Create a new prepared statement
+        LuaPreparedSQLStatement preparedStatement = Database.prepareStatement(computer, getDatabaseURL(), sql);
+        // Record the statement
+        addStatement(computer, preparedStatement);
+        return preparedStatement;
+    }
+
+    /**
+     * Releases all connections and resources to the database from this computer immediately.
+     *
+     * @throws LuaException Thrown when SQL driver returns a warning or error.
+     */
+    @LuaFunction
+    public final void closeAll(IComputerAccess computer) throws LuaException {
+        Map<IComputerAccess, Set<LuaSQLStatementBase>> connections = storage.getDatabaseConnections();
+
+        synchronized (connections) {
+            Set<LuaSQLStatementBase> statements = connections.getOrDefault(computer, Collections.emptySet());
+
+            // Close all connections to the database from the computer
+            for (LuaSQLStatementBase statement : statements) {
+                try {
+                    statement.closeConnection();
+                } catch (SQLException e) {
+                    throw new LuaException(e.getMessage());
+                }
+            }
+
+            statements.clear();
+        }
     }
 
     private String getDatabaseURL() throws LuaException {
@@ -113,6 +184,26 @@ public class DatabaseStoragePeripheral implements IPeripheral {
         }
 
         storage.setStorageID(newID);
+    }
+
+    public void addStatement(IComputerAccess computer, LuaSQLStatementBase statement) {
+        Map<IComputerAccess, Set<LuaSQLStatementBase>> connections = storage.getDatabaseConnections();
+
+        synchronized (connections) {
+            connections.get(computer).add(statement);
+        }
+    }
+
+    public void removeStatement(IComputerAccess computer, LuaSQLStatementBase statement) {
+        Map<IComputerAccess, Set<LuaSQLStatementBase>> connections = storage.getDatabaseConnections();
+
+        synchronized (connections) {
+            Set<LuaSQLStatementBase> statements = connections.get(computer);
+
+            if (statements != null) {
+                statements.remove(statement);
+            }
+        }
     }
 
     public static class Provider implements ICapabilityProvider {

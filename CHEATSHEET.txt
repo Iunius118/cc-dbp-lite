@@ -121,7 +121,7 @@ The database file is saved in `(world_dir)/computercraft/dbstorage/(storage_id)/
   - parameterIndex - [number] The parameter index one-based
 - clearParameters()
   - Clears the current parameter values immediately
-  - The parameter values are cleared immediately without waiting for automatic clearing
+  - The parameter values are cleared immediately instead of waiting for them to be automatically cleared
 - getParameterCount()
   - Retrieves the number of parameters in this prepared statement
   - Returns - [number] The number of parameters
