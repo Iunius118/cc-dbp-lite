@@ -1,6 +1,6 @@
 # CCDatabasePeripheralLite
 
-Version 0.1.1
+Version 0.1.2
 
 A Minecraft mod to add a peripheral for [CC: Tweaked](https://tweaked.cc/) to manipulate databases using [SQLite JDBC Driver](https://github.com/xerial/sqlite-jdbc).
 

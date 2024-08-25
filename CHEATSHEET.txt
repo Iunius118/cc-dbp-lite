@@ -1,7 +1,7 @@
 # Cheatsheet
 
 [CCDatabasePeripheralLite](https://github.com/Iunius118/cc-dbp-lite)
-Version 0.1.1
+Version 0.1.2
 
 A Minecraft mod to add a peripheral for CC: Tweaked to manipulate databases using SQLite JDBC Driver.
 
