@@ -218,7 +218,7 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
     /// Asynchronous Functions /////////////////////////////////////////////////
 
     /**
-     * Asynchronously call {@code execute()}.
+     * Asynchronously calls {@code execute()}.
      *
      * <p>This returns immediately.
      * When the execution has completed, a {@code dbstorage_response} event will be queued.

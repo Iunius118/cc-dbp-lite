@@ -1,5 +1,7 @@
 # CCDatabasePeripheralLite
 
+Version 0.1.1
+
 A Minecraft mod to add a peripheral for [CC: Tweaked](https://tweaked.cc/) to manipulate databases using [SQLite JDBC Driver](https://github.com/xerial/sqlite-jdbc).
 
 ## Requirements
@@ -32,7 +34,7 @@ Players can manipulate the database through this peripheral.
 Each database storage peripheral is identified by storage ID, and each storage has only one database that can be accessed from computers.
 The database file is saved in `(world_dir)/computercraft/dbstorage/(storage_id)/database.db` as a SQLite3 database.
 
-#### Database Storage Peripheral Functions
+#### Database Storage Functions
 
 - getID()
   - Retrieves an integer to identify this database storage peripheral
@@ -45,6 +47,8 @@ The database file is saved in `(world_dir)/computercraft/dbstorage/(storage_id)/
   - Connects to the database with parameterized SQL statement and returns a Prepared Statement table containing functions for manipulating the database
   - sql - [string] An SQL statement that may contain one or more '?' parameter placeholders
   - Returns - [table] The Prepared Statement table containing functions that wraps Connection, PreparedStatement, and ParameterMetaData of Java Database Connectivity
+- closeAll()
+  - Releases all connections and resources to the database from this computer immediately
 
 #### Statement Functions
 
@@ -52,6 +56,10 @@ The database file is saved in `(world_dir)/computercraft/dbstorage/(storage_id)/
   - Executes the given SQL statement
   - sql - [string] An SQL statement
   - Returns - [boolean] true if the first result is a Result Set table; false if it is an update count or there are no results
+- executeAsync(String sql)
+  - Asynchronously calls execute()
+  - This returns immediately. When the execution has completed, a dbstorage_response event will be queued
+  - Returns - [number] The ID of the execution. When the execution has completed, it will queue a dbstorage_response event with a matching id
 - getResultSet()
   - Retrieves the current result as a Result Set table containing functions for manipulating the result
   - The result is read-only, and its cursor may move only forward
@@ -72,6 +80,10 @@ The database file is saved in `(world_dir)/computercraft/dbstorage/(storage_id)/
 - executeBatch()
   - Submits a batch of commands to the database for execution and if all commands execute successfully, returns an array of update counts
   - Returns - [table] An array of update counts containing one element for each command in the batch
+- executeBatchAsync()
+  - Asynchronously calls executeBatch()
+  - This returns immediately. When the execution has completed, a dbstorage_response event will be queued
+  - Returns - [number] The ID of the execution. When the execution has completed, it will queue a dbstorage_response event with a matching id
 - getTransactionIsolation()
   - Retrieves this connection's current transaction isolation level
   - Return - [number] 0 if transactions are not supported; 1 if it is READ UNCOMMITTED; 2 if it is READ COMMITTED; 4 if it is REPEATABLE READ; 8 if it is SERIALIZABLE
@@ -87,6 +99,10 @@ The database file is saved in `(world_dir)/computercraft/dbstorage/(storage_id)/
 - commit()
   - Makes all changes made since the previous commit/rollback permanent and releases any database locks currently held by this connection
   - This function should be used only when auto-commit mode has been disabled
+- commitAsync()
+  - Asynchronously calls commit()
+  - This returns immediately. When the commit has completed, a dbstorage_response event will be queued
+  - Returns - [number] The ID of the execution. When the commit has completed, it will queue a dbstorage_response event with a matching id
 - rollback()
   - Undoes all changes made in the current transaction and releases any database locks currently held by this connection
   - This function should be used only when auto-commit mode has been disabled
@@ -137,6 +153,10 @@ The database file is saved in `(world_dir)/computercraft/dbstorage/(storage_id)/
 - execute()
   - Executes the SQL statement in this prepared statement
   - Returns - [boolean] true if the first result is a ResultSet table; false if it is an update count or there are no results
+- executeAsync()
+  - Asynchronously calls execute()
+  - This returns immediately. When the execution has completed, a dbstorage_response event will be queued
+  - Returns - [number] The ID of the execution. When the execution has completed, it will queue a dbstorage_response event with a matching id
 - getResultSet()
   - Retrieves the current result as a Result Set table containing functions for manipulating the result
   - The result is read-only, and its cursor may move only forward
@@ -156,6 +176,10 @@ The database file is saved in `(world_dir)/computercraft/dbstorage/(storage_id)/
 - executeBatch()
   - Submits a batch of commands to the database for execution and if all commands execute successfully, returns an array of update counts
   - Returns - [table] An array of update counts containing one element for each command in the batch
+- executeBatchAsync()
+  - Asynchronously calls executeBatch()
+  - This returns immediately. When the execution has completed, a dbstorage_response event will be queued
+  - Returns - [number] The ID of the execution. When the execution has completed, it will queue a dbstorage_response event with a matching id
 - getTransactionIsolation()
   - Retrieves this connection's current transaction isolation level
   - Return - [number] 0 if transactions are not supported; 1 if it is READ UNCOMMITTED; 2 if it is READ COMMITTED; 4 if it is REPEATABLE READ; 8 if it is SERIALIZABLE
@@ -171,6 +195,10 @@ The database file is saved in `(world_dir)/computercraft/dbstorage/(storage_id)/
 - commit()
   - Makes all changes made since the previous commit/rollback permanent and releases any database locks currently held by this connection
   - This function should be used only when auto-commit mode has been disabled
+- commitAsync()
+  - Asynchronously calls commit()
+  - This returns immediately. When the commit has completed, a dbstorage_response event will be queued
+  - Returns - [number] The ID of the execution. When the commit has completed, it will queue a dbstorage_response event with a matching id
 - rollback()
   - Undoes all changes made in the current transaction and releases any database locks currently held by this connection
   - This function should be used only when auto-commit mode has been disabled
@@ -256,3 +284,13 @@ The database file is saved in `(world_dir)/computercraft/dbstorage/(storage_id)/
   - Returns - [boolean] true if so; false otherwise
 - close()
   - Releases the result and JDBC resources immediately
+
+#### Event Queued by Database Storage
+
+- dbstorage_response
+  - This is an event that will be queued when a request by an asynchronous function is completed
+  - Returns - eventName, id, isCompletedNormally, result
+    1. eventName - [string] The event name "dbstorage_response"
+    2. id - [number] The ID of the request that completed
+    3. isCompletedNormally - [boolean] true if the request has completed normally; false if it has completed exceptionally
+    4. result - [any | string] If isCompletedNormally is true, the return value of the request. Otherwise, the reason for the exception

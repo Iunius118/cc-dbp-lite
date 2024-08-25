@@ -249,7 +249,7 @@ public class LuaSQLStatementBase {
     /// Asynchronous Functions /////////////////////////////////////////////////
 
     /**
-     * Asynchronously call {@code executeBatch()}.
+     * Asynchronously calls {@code executeBatch()}.
      *
      * <p>This returns immediately.
      * When the execution has completed, a {@code dbstorage_response} event will be queued.
@@ -279,7 +279,7 @@ public class LuaSQLStatementBase {
     }
 
     /**
-     * Asynchronously call {@code commit()}.
+     * Asynchronously calls {@code commit()}.
      *
      * <p>This returns immediately.
      * When the commit has completed, a {@code dbstorage_response} event will be queued.
