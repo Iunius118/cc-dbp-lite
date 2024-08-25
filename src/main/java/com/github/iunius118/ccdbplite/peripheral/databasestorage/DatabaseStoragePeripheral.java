@@ -20,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -63,10 +62,7 @@ public class DatabaseStoragePeripheral implements IPeripheral {
 
             // Close all connections from detached computer
             for (LuaSQLStatementBase statement : statements) {
-                try {
-                    statement.closeConnection();
-                } catch (SQLException ignored) {
-                }
+                statement.closeConnection();
             }
 
             // Remove Set of connections from computer
@@ -141,17 +137,9 @@ public class DatabaseStoragePeripheral implements IPeripheral {
         Map<IComputerAccess, Set<LuaSQLStatementBase>> connections = storage.getDatabaseConnections();
 
         synchronized (connections) {
-            Set<LuaSQLStatementBase> statements = connections.getOrDefault(computer, Collections.emptySet());
-
+            Set<LuaSQLStatementBase> statements = connections.get(computer);
             // Close all connections to the database from the computer
-            for (LuaSQLStatementBase statement : statements) {
-                try {
-                    statement.closeConnection();
-                } catch (SQLException e) {
-                    throw new LuaException(e.getMessage());
-                }
-            }
-
+            statements.forEach(LuaSQLStatementBase::closeConnection);
             statements.clear();
         }
     }
@@ -190,19 +178,11 @@ public class DatabaseStoragePeripheral implements IPeripheral {
         Map<IComputerAccess, Set<LuaSQLStatementBase>> connections = storage.getDatabaseConnections();
 
         synchronized (connections) {
-            connections.get(computer).add(statement);
-        }
-    }
-
-    public void removeStatement(IComputerAccess computer, LuaSQLStatementBase statement) {
-        Map<IComputerAccess, Set<LuaSQLStatementBase>> connections = storage.getDatabaseConnections();
-
-        synchronized (connections) {
             Set<LuaSQLStatementBase> statements = connections.get(computer);
-
-            if (statements != null) {
-                statements.remove(statement);
-            }
+            // Remove all statements that are closed
+            statements.removeIf(LuaSQLStatementBase::isClosed);
+            // Add new statement
+            statements.add(statement);
         }
     }
 

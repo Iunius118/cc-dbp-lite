@@ -231,19 +231,25 @@ public class LuaSQLStatementBase {
      */
     @LuaFunction
     public final void close() throws LuaException {
-        try {
-            closeConnection();
-        } catch (SQLException e) {
-            throw new LuaException(e.getMessage());
+        closeConnection();
+    }
+
+    public void closeConnection() {
+        if (!isClosed) {
+            try {
+                statement.close();
+            } catch (SQLException ignored) {}
+
+            try {
+                connection.close();
+            } catch (SQLException ignored) {}
+
+            isClosed = true;
         }
     }
 
-    public void closeConnection() throws SQLException {
-        if (!isClosed) {
-            isClosed = true;
-            statement.close();
-            connection.close();
-        }
+    public boolean isClosed() {
+        return isClosed;
     }
 
     /// Asynchronous Functions /////////////////////////////////////////////////
