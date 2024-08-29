@@ -3,6 +3,12 @@
 [Source](https://github.com/Iunius118/cc-dbp-lite).
 
 ## [Unreleased]
+### Added
+- New peripheral functions and database manipulation functions for Statement and ResultSet.
+  Each function opens a connection to the database each time it is called and closes the connection after processing is complete.
+
+### Removed
+- All peripheral functions and database manipulation functions in v0.1.2 and earlier.
 
 ## [0.1.2]
 ### Fixed
