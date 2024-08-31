@@ -7,7 +7,8 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -109,18 +110,13 @@ public class LuaSQLStatementBase {
      * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
     @LuaFunction
-    public final Map<Integer, Integer> executeBatch() throws LuaException {
-        int[] updateCounts;
-
+    public final List<Integer> executeBatch() throws LuaException {
         try {
-            updateCounts = statement.executeBatch();
+            int[] updateCounts = statement.executeBatch();
+            return Arrays.stream(updateCounts).boxed().toList();
         } catch (SQLException e) {
             throw new LuaException(e.getMessage());
         }
-
-        // Create a Map<Integer one_based_array_index, Integer update_count> and return it
-        return IntStream.range(0, updateCounts.length).boxed()
-                .collect(Collectors.toMap(i -> i + 1, i -> updateCounts[i]));
     }
 
     /// Connection Functions ///////////////////////////////////////////////////
@@ -274,7 +270,7 @@ public class LuaSQLStatementBase {
 
         CompletableFuture.runAsync(() -> {
             try {
-                Map<Integer, Integer> result = executeBatch();
+                List<Integer> result = executeBatch();
                 DatabaseStorageResponseEvent.succeed(computer, eventID, result);
             } catch (LuaException e) {
                 DatabaseStorageResponseEvent.fail(computer, eventID, e.getMessage());
