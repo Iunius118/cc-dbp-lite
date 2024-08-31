@@ -1,6 +1,6 @@
 # CCDatabasePeripheralLite
 
-Version 0.1.2
+Version 0.1.3
 
 A Minecraft mod to add a peripheral for [CC: Tweaked](https://tweaked.cc/) to manipulate databases using [SQLite JDBC Driver](https://github.com/xerial/sqlite-jdbc).
 
@@ -49,6 +49,8 @@ The database file is saved in `(world_dir)/computercraft/dbstorage/(storage_id)/
   - Returns - [table] The Prepared Statement table containing functions that wraps Connection, PreparedStatement, and ParameterMetaData of Java Database Connectivity
 - closeAll()
   - Releases all connections and resources to the database from this computer immediately
+
+Note that a connection to a database will be automatically closed if it has been open for more than 5 minutes.
 
 #### Statement Functions
 
