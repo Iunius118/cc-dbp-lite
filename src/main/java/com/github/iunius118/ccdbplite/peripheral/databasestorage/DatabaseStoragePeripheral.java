@@ -36,6 +36,12 @@ public class DatabaseStoragePeripheral implements IPeripheral {
         return TYPE;
     }
 
+    @Override
+    public void detach(IComputerAccess computer) {
+        // Close connections from the computer
+        Database.closeConnections(computer);
+    }
+
     @Nullable
     @Override
     public Object getTarget() {
