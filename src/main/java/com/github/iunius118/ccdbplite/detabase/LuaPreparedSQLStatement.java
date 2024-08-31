@@ -11,8 +11,8 @@ public class LuaPreparedSQLStatement extends LuaSQLStatementBase {
     private final PreparedStatement preparedStatement;
     private final ParameterMetaData parameterMetaData;
 
-    public LuaPreparedSQLStatement(IComputerAccess computer, Connection connection, PreparedStatement preparedStatement) throws SQLException {
-        super(computer, connection, preparedStatement);
+    public LuaPreparedSQLStatement(Connection connection, PreparedStatement preparedStatement, IComputerAccess computer) throws SQLException {
+        super(connection, preparedStatement, computer);
         this.preparedStatement = preparedStatement;
         this.parameterMetaData = preparedStatement.getParameterMetaData();
     }

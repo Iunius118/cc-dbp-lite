@@ -3,6 +3,8 @@
 [Source](https://github.com/Iunius118/cc-dbp-lite).
 
 ## [Unreleased]
+### Changed
+- Database connections that have been open for more than 5 minutes are automatically closed.
 
 ## [0.1.2]
 ### Fixed

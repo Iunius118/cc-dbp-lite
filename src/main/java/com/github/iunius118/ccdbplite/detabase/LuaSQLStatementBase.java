@@ -10,20 +10,10 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-public class LuaSQLStatementBase {
-    protected final IComputerAccess computer;
-    protected final Connection connection;
-    protected final Statement statement;
-
-    private boolean isClosed = false;
-
-    public LuaSQLStatementBase(IComputerAccess computer, Connection connection, Statement statement) {
-        this.computer = computer;
-        this.connection = connection;
-        this.statement = statement;
+public class LuaSQLStatementBase extends ConnectionHolder {
+    public LuaSQLStatementBase(Connection connection, Statement statement, IComputerAccess computer) {
+        super(connection, statement, computer);
     }
 
     /**
@@ -222,30 +212,10 @@ public class LuaSQLStatementBase {
 
     /**
      * Releases the connection to the database and JDBC resources immediately.
-     *
-     * @throws LuaException Thrown when SQL driver returns a warning or error.
      */
     @LuaFunction
-    public final void close() throws LuaException {
-        closeConnection();
-    }
-
-    public void closeConnection() {
-        if (!isClosed) {
-            try {
-                statement.close();
-            } catch (SQLException ignored) {}
-
-            try {
-                connection.close();
-            } catch (SQLException ignored) {}
-
-            isClosed = true;
-        }
-    }
-
-    public boolean isClosed() {
-        return isClosed;
+    public final void close() {
+        Database.closeConnection(this);
     }
 
     /// Asynchronous Functions /////////////////////////////////////////////////

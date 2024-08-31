@@ -3,6 +3,7 @@ package com.github.iunius118.ccdbplite;
 import com.github.iunius118.ccdbplite.block.DatabaseStorageBlock;
 import com.github.iunius118.ccdbplite.data.ClientModDataGenerator;
 import com.github.iunius118.ccdbplite.data.ServerModDataGenerator;
+import com.github.iunius118.ccdbplite.detabase.Database;
 import com.github.iunius118.ccdbplite.peripheral.databasestorage.DatabaseStorageBlockEntity;
 import com.github.iunius118.ccdbplite.peripheral.databasestorage.DatabaseStoragePeripheral;
 import com.mojang.logging.LogUtils;
@@ -26,6 +27,8 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -47,6 +50,8 @@ public final class CCDatabasePeripheralLite {
         modEventBus.addListener(this::gatherData);
 
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::attachCapability);
+        MinecraftForge.EVENT_BUS.addListener(this::onServerTick);
+        MinecraftForge.EVENT_BUS.addListener(this::onServerStopped);
     }
 
     public static ResourceLocation id(String path) {
@@ -62,6 +67,24 @@ public final class CCDatabasePeripheralLite {
             // Attach database peripheral to database block entity
             event.addCapability(PERIPHERAL, new DatabaseStoragePeripheral.Provider(database));
         }
+    }
+
+    private int connectionCheckTimer = 0;
+
+    private void onServerTick(TickEvent.ServerTickEvent event) {
+        // Periodically check for unused JDBC connections
+        if (event.phase == TickEvent.Phase.END && --connectionCheckTimer <= 0) {
+            // Check and close expired connections
+            Database.checkConnections();
+            // Every 300 seconds, TODO: Config?
+            connectionCheckTimer = 6000;
+        }
+    }
+
+    private void onServerStopped(ServerStoppedEvent event) {
+        // Close all JDBC connections
+        Database.closeAllConnections();
+        connectionCheckTimer = 0;
     }
 
     private void registerGameObjects(IEventBus modEventBus) {

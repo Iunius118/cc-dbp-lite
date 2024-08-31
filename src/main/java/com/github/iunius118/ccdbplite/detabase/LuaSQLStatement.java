@@ -10,8 +10,8 @@ import java.sql.Statement;
 import java.util.concurrent.CompletableFuture;
 
 public class LuaSQLStatement extends LuaSQLStatementBase {
-    public LuaSQLStatement(IComputerAccess computer, Connection connection, Statement statement) {
-        super(computer, connection, statement);
+    public LuaSQLStatement(Connection connection, Statement statement, IComputerAccess computer) {
+        super(connection, statement, computer);
     }
 
     /**
