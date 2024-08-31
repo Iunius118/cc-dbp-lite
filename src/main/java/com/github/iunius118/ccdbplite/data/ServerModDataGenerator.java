@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 
 public final class ServerModDataGenerator {
     // RecipeProvider
-    private static Consumer<GatherDataEvent> recipeGenerator = event -> {
+    private static final Consumer<GatherDataEvent> recipeGenerator = event -> {
         var dataGenerator = event.getGenerator();
         var recipeProvider = new RecipeProvider(dataGenerator.getPackOutput()) {
             @Override
@@ -56,7 +56,7 @@ public final class ServerModDataGenerator {
     };
 
     // LootTableProvider
-    private static Consumer<GatherDataEvent> lootTableGenerator = event -> {
+    private static final Consumer<GatherDataEvent> lootTableGenerator = event -> {
         Block databaseStorageBlock = CCDatabasePeripheralLite.Blocks.DATABASE_STORAGE;
         Supplier<LootTableSubProvider> blockLootSubProvider = () -> new BlockLootSubProvider(Set.of(), FeatureFlags.REGISTRY.allFlags()) {
             final LootTable.Builder lootTableBuilder = LootTable.lootTable()

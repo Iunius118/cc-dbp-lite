@@ -24,11 +24,11 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
@@ -44,11 +44,7 @@ public final class CCDatabasePeripheralLite {
     public CCDatabasePeripheralLite() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         registerGameObjects(modEventBus);
-        modEventBus.addListener(ServerModDataGenerator::gatherData);
-
-        if (FMLLoader.getDist().isClient()) {
-            modEventBus.addListener(ClientModDataGenerator::gatherData);
-        }
+        modEventBus.addListener(this::gatherData);
 
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::attachCapability);
     }
@@ -110,5 +106,15 @@ public final class CCDatabasePeripheralLite {
 
     public static final class Capabilities {
         public static final Capability<IPeripheral> CAPABILITY_PERIPHERAL = CapabilityManager.get(new CapabilityToken<>(){});
+    }
+
+    private void gatherData(final GatherDataEvent event) {
+        if (event.includeServer()) {
+            ServerModDataGenerator.gatherData(event);
+        }
+
+        if (event.includeClient()) {
+            ClientModDataGenerator.gatherData(event);
+        }
     }
 }
