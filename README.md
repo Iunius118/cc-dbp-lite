@@ -46,7 +46,7 @@ print("Connected to database, storage ID " .. db.getID())
 
 -- Execute update
 stmt.execute("DROP TABLE IF EXISTS player")
-stmt.execute("CREATE TABLE player (id INTEGER PRIMARY KEY, name TEXT)")
+stmt.execute("CREATE TABLE player (id INTEGER NOT NULL PRIMARY KEY, name TEXT)")
 stmt.execute("INSERT INTO player VALUES(1, 'Steve')")
 stmt.execute("INSERT INTO player VALUES(2, 'Alex')")
 stmt.execute("INSERT INTO player VALUES(3, 'Noor')")

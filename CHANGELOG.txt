@@ -7,6 +7,7 @@
 ## [0.1.3]
 ### Changed
 - Database connection that has been open for more than 5 minutes will be closed automatically.
+- Close all connections from a computer when it is detached from storage.
 
 ## [0.1.2]
 ### Fixed
