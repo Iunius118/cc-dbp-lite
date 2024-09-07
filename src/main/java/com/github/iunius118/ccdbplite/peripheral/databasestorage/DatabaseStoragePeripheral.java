@@ -69,6 +69,28 @@ public class DatabaseStoragePeripheral implements IPeripheral {
     }
 
     /**
+     * Retrieves the name of this database storage.
+     * This name helps players identify the database storage, but is not an identifier of the database.
+     *
+     * @return The database storage name.
+     */
+    @LuaFunction
+    public final String getName() {
+        return storage.getStorageName();
+    }
+
+    /**
+     * Renames this database storage.
+     * This name helps players identify the database storage, but is not an identifier of the database.
+     *
+     * @param name {@code string} A new name to set.
+     */
+    @LuaFunction
+    public final void setName(String name) {
+        storage.setStorageName(name);
+    }
+
+    /**
      * Connects to the database and returns a {@code Statement} table containing functions for manipulating the database.
      *
      * @return {@code table} The table containing functions that wraps {@code Connection} and {@code Statement} of JDBC.

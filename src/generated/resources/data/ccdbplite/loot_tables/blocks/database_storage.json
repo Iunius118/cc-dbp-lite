@@ -22,6 +22,11 @@
                 },
                 {
                   "op": "replace",
+                  "source": "name",
+                  "target": "BlockEntityTag.name"
+                },
+                {
+                  "op": "replace",
                   "source": "id",
                   "target": "BlockEntityTag.id"
                 },
@@ -31,6 +36,10 @@
                   "target": "BlockEntityTag.ForgeCaps"
                 }
               ],
+              "source": "block_entity"
+            },
+            {
+              "function": "minecraft:copy_name",
               "source": "block_entity"
             }
           ],

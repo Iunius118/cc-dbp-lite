@@ -15,11 +15,11 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.flag.FeatureFlags;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.CopyNameFunction;
 import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
@@ -63,9 +63,11 @@ public final class ServerModDataGenerator {
                     .withPool(this.applyExplosionCondition(databaseStorageBlock, LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
                             .add(LootItem.lootTableItem(databaseStorageBlock)
                                     .apply(CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                                            .copy(DatabaseStorageBlockEntity.KEY_DATABASE_STORAGE_ID, "%s.%s".formatted(BlockItem.BLOCK_ENTITY_TAG, DatabaseStorageBlockEntity.KEY_DATABASE_STORAGE_ID))
+                                            .copy(DatabaseStorageBlockEntity.KEY_DATABASE_STORAGE_ID, "BlockEntityTag." + DatabaseStorageBlockEntity.KEY_DATABASE_STORAGE_ID)
+                                            .copy(DatabaseStorageBlockEntity.KEY_NAME, "BlockEntityTag." + DatabaseStorageBlockEntity.KEY_NAME)
                                             .copy("id", "BlockEntityTag.id")
-                                            .copy("ForgeCaps", "BlockEntityTag.ForgeCaps")))));
+                                            .copy("ForgeCaps", "BlockEntityTag.ForgeCaps"))
+                                    .apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY)))));
 
             @Override
             protected void generate() {

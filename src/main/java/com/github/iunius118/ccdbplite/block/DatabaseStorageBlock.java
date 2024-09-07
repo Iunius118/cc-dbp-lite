@@ -40,7 +40,7 @@ public class DatabaseStorageBlock extends BaseEntityBlock {
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity entity, ItemStack itemStack) {
         super.setPlacedBy(level, pos, state, entity, itemStack);
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+        var blockEntity = level.getBlockEntity(pos);
 
         if (blockEntity instanceof DatabaseStorageBlockEntity storage) {
             // Copy database storage id from item stack tag
@@ -49,6 +49,10 @@ public class DatabaseStorageBlock extends BaseEntityBlock {
 
                 if (compoundTag.contains(DatabaseStorageBlockEntity.KEY_DATABASE_STORAGE_ID, Tag.TAG_INT)) {
                     storage.setStorageID(compoundTag.getInt(DatabaseStorageBlockEntity.KEY_DATABASE_STORAGE_ID));
+                }
+
+                if (compoundTag.contains(DatabaseStorageBlockEntity.KEY_NAME, Tag.TAG_STRING)) {
+                    storage.setStorageName(compoundTag.getString(DatabaseStorageBlockEntity.KEY_NAME));
                 }
             }
         }
@@ -59,12 +63,12 @@ public class DatabaseStorageBlock extends BaseEntityBlock {
         if (level.getBlockEntity(pos) instanceof DatabaseStorageBlockEntity storage) {
             if (!level.isClientSide && player.isCreative()) {
                 // Drop item stack with block entity tag saved when block is broken by creative player
-                ItemStack itemstack = new ItemStack(CCDatabasePeripheralLite.Items.DATABASE_STORAGE);
-                storage.saveToItem(itemstack);
+                var itemStack = new ItemStack(CCDatabasePeripheralLite.Items.DATABASE_STORAGE);
+                storage.saveToItem(itemStack);
 
-                ItemEntity itementity = new ItemEntity(level, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, itemstack);
-                itementity.setDefaultPickUpDelay();
-                level.addFreshEntity(itementity);
+                var itemEntity = new ItemEntity(level, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, itemStack);
+                itemEntity.setDefaultPickUpDelay();
+                level.addFreshEntity(itemEntity);
             }
         }
 
@@ -73,14 +77,14 @@ public class DatabaseStorageBlock extends BaseEntityBlock {
 
     @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
-        ItemStack itemstack = super.getCloneItemStack(state, target, level, pos, player);
+        var itemStack = super.getCloneItemStack(state, target, level, pos, player);
 
         if (level.getBlockEntity(pos) instanceof DatabaseStorageBlockEntity storage) {
             // Return item stack with block entity tag saved when block is picked by player
-            storage.saveToItem(itemstack);
+            storage.saveToItem(itemStack);
         }
 
-        return itemstack;
+        return itemStack;
     }
 
     @Override
